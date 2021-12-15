@@ -14,13 +14,8 @@ export class UsersRepository implements IUsersRepository {
   async findUserWithGamesById({
     user_id,
   }: IFindUserWithGamesDTO): Promise<User> {
-    const userEmpty = {} as User;
-    const user = await this.repository.findOne(user_id);
-
-    if(user) {
-      return user;
-    }
-    return userEmpty;
+    const user = await this.repository.findOne(user_id, { relations: ['games'] }) as User;
+    return user;
   }
 
   async findAllUsersOrderedByFirstName(): Promise<User[]> {
@@ -42,9 +37,9 @@ export class UsersRepository implements IUsersRepository {
       FROM
       users
       WHERE
-      first_name = LOWER('${first_name}')
+      LOWER(first_name) = LOWER('${first_name}')
       AND 
-      last_name = LOWER('${last_name}')
+      LOWER(last_name) = LOWER('${last_name}')
     `);
   }
 }
